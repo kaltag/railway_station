@@ -6,10 +6,10 @@ puts 'year?'
 year = gets.chomp.to_i
 
 all_days = 0
-arr_Month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+arr_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
 (1..month - 1).each do |i|
-  all_days += arr_Month[i]
+  all_days += arr_month[i]
 end
 
 all_days += day
