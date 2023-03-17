@@ -15,12 +15,12 @@ class Station
   end
 
   def train_by_type(type)
-    trains.select { |n| n.type == type }
+    trains.select { |train| train.type == type }
   end
 end
 
 class Route
-  attr_reader :stations
+  attr_reader :stations, :first_station, :last_station
 
   def initialize(first_station, last_station)
     @first_station = first_station
@@ -72,7 +72,7 @@ class Train
   end
 
   def move_next_station(route = self.route)
-    return if route.stations[-1] == route.stations[@current_station_index]
+    return if next_station.nil?
 
     route.stations[@current_station_index].delete_train(self)
     @current_station_index += 1
@@ -80,22 +80,22 @@ class Train
   end
 
   def move_past_station(route = self.route)
-    return if route.stations[0] == route.stations[@current_station_index]
+    return if past_station.nil?
 
     route.stations[@current_station_index].delete_train(self)
     @current_station_index -= 1
     route.stations[@current_station_index].add_train(self)
   end
 
-  def current_station(route = self.route)
-    route.stations[@current_station_index].name
+  def current_station
+    route.stations[@current_station_index]
   end
 
-  def next_station(route = self.route)
-    route.stations[@current_station_index + 1].name unless route.stations[@current_station_index] == route.stations[-1]
+  def next_station
+    route.stations[@current_station_index + 1]
   end
 
-  def past_station(route = self.route)
-    route.stations[@current_station_index - 1].name unless route.stations[@current_station_index] == route.stations[0]
+  def past_station
+    route.stations[@current_station_index - 1] unless route.first_station == current_station
   end
 end
