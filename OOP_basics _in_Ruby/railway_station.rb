@@ -14,16 +14,8 @@ class Station
     trains.delete(train)
   end
 
-  def pass_train
-    trains.each do |train|
-      puts train if train.type == 'PASS'
-    end
-  end
-
-  def gruz_train
-    trains.each do |train|
-      puts train if train.type == 'GRUZ'
-    end
+  def train_by_type(type)
+    trains.select { |n| n.type == type }
   end
 end
 
@@ -41,7 +33,7 @@ class Route
   end
 
   def delete_station(station)
-    stations.delete(station) if station != stations[0] && station != stations[-1]
+    stations.delete(station) unless [@first_station, @last_station].include?(station)
   end
 end
 
@@ -75,54 +67,35 @@ class Train
 
   def add_route(new_route)
     @route = new_route
-    new_route.stations.first.add_train(self)
+    @current_station_index = 0
+    new_route.stations[@current_station_index].add_train(self)
   end
 
   def move_next_station(route = self.route)
-    route.stations.each_cons(2) do |station, next_staion|
-      if station.trains.include?(self)
-        station.delete_train(self)
-        next_staion.add_train(self)
-        break
-      end
-    end
+    return if route.stations[-1] == route.stations[@current_station_index]
+
+    route.stations[@current_station_index].delete_train(self)
+    @current_station_index += 1
+    route.stations[@current_station_index].add_train(self)
   end
 
   def move_past_station(route = self.route)
-    route.stations.reverse.each_cons(2) do |station, past_staion|
-      if station.trains.include?(self)
-        station.delete_train(self)
-        past_staion.add_train(self)
-        break
-      end
-    end
+    return if route.stations[0] == route.stations[@current_station_index]
+
+    route.stations[@current_station_index].delete_train(self)
+    @current_station_index -= 1
+    route.stations[@current_station_index].add_train(self)
   end
 
   def current_station(route = self.route)
-    route.stations.each do |station|
-      if station.trains.include?(self)
-        puts station.name
-        break
-      end
-    end
+    route.stations[@current_station_index].name
   end
 
   def next_station(route = self.route)
-    route.stations.each_cons(2) do |station, next_staion|
-      if station.trains.include?(self)
-        puts next_staion.name
-        break
-      end
-    end
+    route.stations[@current_station_index + 1].name unless route.stations[@current_station_index] == route.stations[-1]
   end
 
   def past_station(route = self.route)
-    route.stations.reverse.each_cons(2) do |station, past_staion|
-      if station.trains.include?(self)
-        puts past_staion.name
-        break
-      end
-    end
+    route.stations[@current_station_index - 1].name unless route.stations[@current_station_index] == route.stations[0]
   end
-
 end
