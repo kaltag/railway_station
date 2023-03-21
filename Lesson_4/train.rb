@@ -1,29 +1,20 @@
 class Train
-  attr_reader :train_number, :route, :number_of_wagons, :type
+  attr_reader :train_number, :route, :wagons
   attr_accessor :speed
 
-  def initialize(train_number, type, number_of_wagons)
+  def initialize(train_number)
     @train_number = train_number
-    @type = type
-    @number_of_wagons = number_of_wagons
+    @wagons = []
     @route
     @speed = 0
   end
 
-  def speed_up
-    self.speed += 10
+  def add_wagons(wagon)
+    @wagons << wagon if speed.zero? && wagon.wagon_type == train_type
   end
 
-  def speed_down
-    self.speed -= 10 if self.speed.positive?
-  end
-
-  def add_number_of_wagons
-    @number_of_wagons += 1 if self.speed.zero?
-  end
-
-  def delete_number_of_wagons
-    @number_of_wagons -= 1 if number_of_wagons.positive? && self.speed.zero?
+  def delete_wagons(wagon)
+    @wagons.delete(wagon) if wagons.any? && speed.zero?
   end
 
   def add_route(new_route)
@@ -58,5 +49,19 @@ class Train
 
   def past_station
     route.stations[@current_station_index - 1] unless route.first_station == current_station
+  end
+
+  # Добавил данные методы в protected, тк по ТЗ пользователь не может изменять скорость поезда, а следовательно у него нет доступа в этим методам
+  # Почему private а не protected, тк сейчас у дочерних классов нет никаких методов для изменения скорости, то и доступ к ним остается только в том классе
+  # если в дочерних будут изменения, то и тут станет protected
+
+  private
+
+  def speed_up
+    self.speed += 10
+  end
+
+  def speed_down
+    self.speed -= 10 if self.speed.positive?
   end
 end
