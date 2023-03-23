@@ -5,7 +5,7 @@ class Train
   def initialize(train_number)
     @train_number = train_number
     @wagons = []
-    @route
+    @train_route
     @speed = 0
   end
 
@@ -18,7 +18,7 @@ class Train
   end
 
   def add_route(new_route)
-    @route = new_route
+    @train_route = new_route
     @current_station_index = 0
     new_route.stations[@current_station_index].add_train(self)
   end
