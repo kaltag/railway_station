@@ -1,12 +1,26 @@
+require_relative 'manufacturer_company'
+require_relative 'instance_counter'
+
 class Train
+  include ManufacturerCompany
+  include InstanceCounter
+
   attr_reader :train_number, :route, :wagons
   attr_accessor :speed
+
+  @@all_trains = []
+
+  def self.find(number)
+    @@all_trains.select { |train| train.train_number == number }
+  end
 
   def initialize(train_number)
     @train_number = train_number
     @wagons = []
     @train_route
     @speed = 0
+    @@all_trains << self
+    register_instance
   end
 
   def add_wagons(wagon)
@@ -50,10 +64,6 @@ class Train
   def past_station
     route.stations[@current_station_index - 1] unless route.first_station == current_station
   end
-
-  # Добавил данные методы в protected, тк по ТЗ пользователь не может изменять скорость поезда, а следовательно у него нет доступа в этим методам
-  # Почему private а не protected, тк сейчас у дочерних классов нет никаких методов для изменения скорости, то и доступ к ним остается только в том классе
-  # если в дочерних будут изменения, то и тут станет protected
 
   private
 

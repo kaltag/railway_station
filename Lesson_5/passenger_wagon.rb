@@ -1,4 +1,8 @@
+require_relative 'manufacturer_company'
+
 class PassengerWagon
+  include ManufacturerCompany
+
   attr_reader :wagon_type
 
   def initialize
