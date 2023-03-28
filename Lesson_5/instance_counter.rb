@@ -5,15 +5,23 @@ module InstanceCounter
   end
 
   module ClassMethods
-    attr_accessor :instances
+    attr_reader :instances
+
+    private
+
+    def increment_instances
+      self.instances ||= 0
+      self.instances += 1
+    end
+
+    attr_writer :instances
   end
 
   module InstanceMethods
     protected
 
     def register_instance
-      self.class.instances ||= 0
-      self.class.instances += 1
+      self.class.send :increment_instances
     end
   end
 end
