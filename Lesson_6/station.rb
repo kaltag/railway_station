@@ -16,6 +16,14 @@ class Station
     @trains = []
     @@all_stations << self
     register_instance
+    validate!
+  end
+
+  def valid?
+    validate!
+    true
+  rescue StandardError
+    false
   end
 
   def add_train(train)
@@ -28,5 +36,11 @@ class Station
 
   def train_by_type(type)
     trains.select { |train| train.type == type }
+  end
+
+  private
+
+  def validate!
+    raise 'Название не может быть пустым' if name.nil?
   end
 end

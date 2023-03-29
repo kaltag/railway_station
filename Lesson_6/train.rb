@@ -10,6 +10,9 @@ class Train
 
   @@all_trains = []
 
+  # три буквы или цифры, потом необязательный дефис, потом 2 буквы или цифры
+  TRAIN_NUMBER_FORMAT = /\A[\w\d]{3}-?[\w\d]{2}\z/i.freeze
+
   def self.find(number)
     @@all_trains.find { |train| train.train_number == number }
   end
@@ -21,6 +24,14 @@ class Train
     @speed = 0
     @@all_trains << self
     register_instance
+    validate!
+  end
+
+  def valid?
+    validate!
+    true
+  rescue StandardError
+    false
   end
 
   def add_wagons(wagon)
@@ -73,5 +84,11 @@ class Train
 
   def speed_down
     self.speed -= 10 if self.speed.positive?
+  end
+
+  protected
+
+  def validate!
+    raise 'Введены некорректные данные номера поезда' if train_number !~ TRAIN_NUMBER_FORMAT
   end
 end

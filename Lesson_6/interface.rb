@@ -73,12 +73,25 @@ class Interface
     when 1
       showing_type_train
       train_type = gets.to_i
-      puts 'Ввведите номер поезда'
       case train_type
       when 1
-        @cargo_trains << CargoTrain.new(gets.to_i)
+        begin
+          puts 'Ввведите номер поезда в формате ххх-хх'
+          @cargo_trains << CargoTrain.new(gets.chomp)
+          puts "Создан грузовой поезд под номером#{@cargo_trains.last.train_number}"
+        rescue StandardError => e
+          puts e.message
+          retry
+        end
       when 2
-        @passenger_trains << PassengerTrain.new(gets.to_i)
+        begin
+          puts 'Ввведите номер поезда в формате ххх-хх'
+          @passenger_trains << PassengerTrain.new(gets.chomp)
+          puts "Создан пассажирский поезд под номером:#{@passenger_trains.last.train_number}"
+        rescue StandardError => e
+          puts e.message
+          retry
+        end
       else
         puts 'Введены некорректные данные'
       end
