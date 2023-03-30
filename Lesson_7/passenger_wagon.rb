@@ -12,14 +12,10 @@ class PassengerWagon
   end
 
   def take_seat
-    self.occupied_seats += 1 if occupied_seats < number_of_seats
+    @occupied_seats += 1 if occupied_seats < number_of_seats
   end
 
   def check_free_seats
-    number_of_seats - self.occupied_seats
+    number_of_seats - occupied_seats
   end
-
-  private
-
-  attr_writer :occupied_seats
 end

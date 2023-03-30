@@ -12,14 +12,10 @@ class CargoWagon
   end
 
   def take_up_volume(volume)
-    self.occupied_volume += volume if (occupied_volume + volume) < overall_volume
+    @occupied_volume += volume if (occupied_volume + volume) < overall_volume
   end
 
   def check_free_volume
-    overall_volume - self.occupied_volume
+    overall_volume - occupied_volume
   end
-
-  private
-
-  attr_writer :occupied_volume
 end
