@@ -26,6 +26,10 @@ class Station
     false
   end
 
+  def all_trains(&block)
+    @trains.each(&block)
+  end
+
   def add_train(train)
     trains << train
   end

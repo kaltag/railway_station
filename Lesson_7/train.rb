@@ -42,6 +42,10 @@ class Train
     @wagons.delete(wagon) if wagons.any? && speed.zero?
   end
 
+  def all_wagons(&block)
+    @wagons.each_with_index(&block)
+  end
+
   def add_route(new_route)
     @train_route = new_route
     @current_station_index = 0

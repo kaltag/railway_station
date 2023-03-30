@@ -50,9 +50,7 @@ class Interface
         if @stations[input_station].nil?
           puts 'Такой станции не существует'
         else
-          @stations[input_station].trains.each do |train|
-            puts "Номер поезда: #{train.train_number}"
-          end
+          @stations[input_station].all_trains { |train| puts "Номер поезда: #{train.train_number}" }
         end
       else
         puts 'Станции еще не созданы'
@@ -65,9 +63,11 @@ class Interface
     puts '1 - Создать новый поезд'
     puts '2 - Добавить вагон к поезду'
     puts '3 - Отцепить вагон от поезда'
-    puts '4 - Назначить маршут поезду'
-    puts '5 - Переместить поезд на станцию вперед'
-    puts '6 - Переместить поезд на станцию назад'
+    puts '4 - Посмотреть кол-во вагонов у поезда'
+    puts '5 - Занять место в вагоне'
+    puts '6 - Назначить маршут поезду'
+    puts '7 - Переместить поезд на станцию вперед'
+    puts '8 - Переместить поезд на станцию назад'
     input = gets.to_i
     case input
     when 1
@@ -101,10 +101,14 @@ class Interface
       case train_type
       when 1
         choose_current_train(@cargo_trains)
-        @current_train.add_wagons(CargoWagon.new)
+        puts 'Введите объем вагона'
+        input_volume = gets.to_i
+        @current_train.add_wagons(CargoWagon.new(input_volume))
       when 2
         choose_current_train(@passenger_trains)
-        @current_train.add_wagons(PassengerWagon.new)
+        puts 'Введите вместимость вагона'
+        input_seats = gets.to_i
+        @current_train.add_wagons(PassengerWagon.new(input_seats))
       else
         puts 'Введены некорректные данные'
       end
@@ -124,6 +128,37 @@ class Interface
       train_type = gets.to_i
       case train_type
       when 1
+        check_all_wagon(@cargo_trains)
+      when 2
+        check_all_wagon(@passenger_trains)
+      else
+        puts 'Введены некорректные данные'
+      end
+    when 5
+      showing_type_train
+      train_type = gets.to_i
+      case train_type
+      when 1
+        add_volume(@cargo_trains)
+        input_wagon = gets.to_i
+        puts 'Введите сколько объема вы хотите занять'
+        puts "Свободно #{@current_train.wagons[input_wagon - 1].check_free_volume} едениц"
+        volume = gets.to_i
+        @current_train.wagons[input_wagon - 1].take_up_volume(volume)
+      when 2
+        add_volume(@passenger_trains)
+        input_wagon = gets.to_i
+        puts "Осталось свободных мест: #{@current_train.wagons[input_wagon - 1].check_free_seats}"
+        @current_train.wagons[input_wagon - 1].take_seat
+
+      else
+        puts 'Введены некорректные данные'
+      end
+    when 6
+      showing_type_train
+      train_type = gets.to_i
+      case train_type
+      when 1
         add_route_train(@cargo_trains)
       when 2
         add_route_train(@passenger_trains)
@@ -131,7 +166,7 @@ class Interface
         puts 'Введены некорректные данные'
       end
 
-    when 5
+    when 7
       showing_type_train
       train_type = gets.to_i
       case train_type
@@ -142,7 +177,7 @@ class Interface
       else
         puts 'Введены некорректные данные'
       end
-    when 6
+    when 8
       showing_type_train
       train_type = gets.to_i
       case train_type
@@ -241,7 +276,7 @@ class Interface
 
   def choose_current_train(trains)
     trains.each_with_index do |train, index|
-      puts "Поезд код:#{train.train_number} под номером - #{index + 1}, вагонов: #{train.wagons.count}"
+      puts "Поезд код:#{train.train_number} под номером - #{index + 1}"
     end
     puts 'Ввведите номер поезда'
     input_train = gets.to_i - 1
@@ -251,6 +286,16 @@ class Interface
   def remove_wagon(trains)
     choose_current_train(trains)
     @current_train.delete_wagons(@current_train.wagons.last)
+  end
+
+  def check_all_wagon(trains)
+    choose_current_train(trains)
+    @current_train.all_wagons { |_wagon, index| puts "Вагон номер #{index + 1}" }
+  end
+
+  def add_volume(trains)
+    check_all_wagon(trains)
+    puts 'Выберете номер вагона'
   end
 
   def add_route_train(trains)
