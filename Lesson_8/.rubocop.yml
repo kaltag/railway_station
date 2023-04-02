@@ -1,0 +1,14 @@
+AllCops:
+  NewCops: enable
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/ClassVars:
+  Enabled: false
+
+Metrics/AbcSize:
+  CountRepeatedAttributes: false

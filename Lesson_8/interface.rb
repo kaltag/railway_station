@@ -91,44 +91,56 @@ class Interface
     showing_type_train
     case gets.to_i
     when 1
-      begin
-        puts 'Ввведите номер поезда в формате ххх-хх'
-        @cargo_trains << CargoTrain.new(gets.chomp)
-        puts "Создан грузовой поезд под номером#{@cargo_trains.last.train_number}"
-      rescue StandardError => e
-        puts e.message
-        retry
-      end
+      new_cargo_train
     when 2
-      begin
-        puts 'Ввведите номер поезда в формате ххх-хх'
-        @passenger_trains << PassengerTrain.new(gets.chomp)
-        puts "Создан пассажирский поезд под номером:#{@passenger_trains.last.train_number}"
-      rescue StandardError => e
-        puts e.message
-        retry
-      end
+      new_passenger_train
     else
       puts 'Введены некорректные данные'
     end
+  end
+
+  def new_cargo_train
+    puts 'Ввведите номер поезда в формате ххх-хх'
+    @cargo_trains << CargoTrain.new(gets.chomp)
+    puts "Создан грузовой поезд под номером#{@cargo_trains.last.train_number}"
+  rescue StandardError => e
+    puts e.message
+    retry
+  end
+
+  def new_passenger_train
+    puts 'Ввведите номер поезда в формате ххх-хх'
+    @passenger_trains << PassengerTrain.new(gets.chomp)
+    puts "Создан пассажирский поезд под номером:#{@passenger_trains.last.train_number}"
+  rescue StandardError => e
+    puts e.message
+    retry
   end
 
   def add_wagon_menu
     showing_type_train
     case gets.to_i
     when 1
-      choose_current_train(@cargo_trains)
-      puts 'Введите объем вагона'
-      input_volume = gets.to_i
-      @current_train.add_wagons(CargoWagon.new(input_volume))
+      add_cargo_wagon
     when 2
-      choose_current_train(@passenger_trains)
-      puts 'Введите вместимость вагона'
-      input_seats = gets.to_i
-      @current_train.add_wagons(PassengerWagon.new(input_seats))
+      add_passenger_wagon
     else
       puts 'Введены некорректные данные'
     end
+  end
+
+  def add_cargo_wagon
+    choose_current_train(@cargo_trains)
+    puts 'Введите объем вагона'
+    input_volume = gets.to_i
+    @current_train.add_wagons(CargoWagon.new(input_volume))
+  end
+
+  def add_passenger_wagon
+    choose_current_train(@passenger_trains)
+    puts 'Введите вместимость вагона'
+    input_seats = gets.to_i
+    @current_train.add_wagons(PassengerWagon.new(input_seats))
   end
 
   def delete_wagon_menu
@@ -159,20 +171,28 @@ class Interface
     showing_type_train
     case gets.to_i
     when 1
-      add_volume(@cargo_trains)
-      input_wagon = gets.to_i
-      puts 'Введите сколько объема вы хотите занять'
-      puts "Свободно #{@current_train.wagons[input_wagon - 1].check_free_volume} едениц"
-      volume = gets.to_i
-      @current_train.wagons[input_wagon - 1].take_up_volume(volume)
+      take_place_cargo
     when 2
-      add_volume(@passenger_trains)
-      input_wagon = gets.to_i
-      puts "Осталось свободных мест: #{@current_train.wagons[input_wagon - 1].check_free_seats}"
-      @current_train.wagons[input_wagon - 1].take_seat
+      take_place_passenger
     else
       puts 'Введены некорректные данные'
     end
+  end
+
+  def take_place_cargo
+    add_volume(@cargo_trains)
+    input_wagon = gets.to_i
+    puts 'Введите сколько объема вы хотите занять'
+    puts "Свободно #{@current_train.wagons[input_wagon - 1].check_free_volume} едениц"
+    volume = gets.to_i
+    @current_train.wagons[input_wagon - 1].take_up_volume(volume)
+  end
+
+  def take_place_passenger
+    add_volume(@passenger_trains)
+    input_wagon = gets.to_i
+    puts "Осталось свободных мест: #{@current_train.wagons[input_wagon - 1].check_free_seats}"
+    @current_train.wagons[input_wagon - 1].take_seat
   end
 
   def route_train_menu
