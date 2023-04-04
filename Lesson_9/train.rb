@@ -1,12 +1,19 @@
 require_relative 'manufacturer_company'
 require_relative 'instance_counter'
+require_relative 'accessors'
+require_relative 'validation'
 
 class Train
   include ManufacturerCompany
   include InstanceCounter
+  include Validation
+  extend Accessors
+
 
   attr_reader :train_number, :train_route, :wagons
   attr_accessor :speed
+
+  strong_attr_accessor :speed, Integer
 
   @@all_trains = []
 
@@ -25,13 +32,6 @@ class Train
     @@all_trains << self
     register_instance
     validate!
-  end
-
-  def valid?
-    validate!
-    true
-  rescue StandardError
-    false
   end
 
   def add_wagons(wagon)
@@ -88,11 +88,5 @@ class Train
 
   def speed_down
     self.speed -= 10 if self.speed.positive?
-  end
-
-  protected
-
-  def validate!
-    raise 'Введены некорректные данные номера поезда' if train_number !~ TRAIN_NUMBER_FORMAT
   end
 end

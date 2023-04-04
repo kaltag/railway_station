@@ -1,11 +1,21 @@
 require_relative 'instance_counter'
+require_relative 'accessors'
+require_relative 'validation'
+
 
 class Station
   include InstanceCounter
+  include Validation
+  extend Accessors
 
-  attr_reader :name, :trains
+  attr_accessor_with_history :name
+
+  attr_reader :trains
 
   @@all_stations = []
+
+  validate :name, :presence
+  validate :name, :type, String
 
   def self.all
     @@all_stations
@@ -17,13 +27,6 @@ class Station
     @@all_stations << self
     register_instance
     validate!
-  end
-
-  def valid?
-    validate!
-    true
-  rescue StandardError
-    false
   end
 
   def all_trains(&block)
@@ -40,11 +43,5 @@ class Station
 
   def train_by_type(type)
     trains.select { |train| train.type == type }
-  end
-
-  private
-
-  def validate!
-    raise 'Название не может быть пустым' if name.nil?
   end
 end
